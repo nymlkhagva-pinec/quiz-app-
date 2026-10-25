@@ -74,7 +74,7 @@ const CreateQuizPage = () => {
     const response = await supabase
       .from("quiz")
       .insert({
-        quizName: quiz,
+        quizTitle: quiz,
       })
       .select("*")
       .single();
@@ -94,7 +94,7 @@ const CreateQuizPage = () => {
       const questionId = response.data[0].id;
 
       for (let j = 0; j < questions[i].answers.length; j++) {
-        await supabase.from("quistion_answers").insert({
+        await supabase.from("question_answers").insert({
           questionId: questionId,
           answer: questions[i].answers[j],
           isCorrect: questions[i].correctIndex === j,

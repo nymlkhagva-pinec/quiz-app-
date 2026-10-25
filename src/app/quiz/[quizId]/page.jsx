@@ -21,7 +21,7 @@ const Page = () => {
     const getQuizQuestions = async () => {
       const response = await supabase
         .from("quiz_questions")
-        .select("*, quistion_answers(*)")
+        .select("*, question_answers(*)")
         .eq("quizId", quizId);
 
       setQuestions(response.data ?? []);
@@ -41,7 +41,7 @@ const Page = () => {
     for (let i = 0; i < questions.length; i++) {
       totalPoint = totalPoint + questions[i].point;
 
-      const correctAnswer = questions[i].quistion_answers.find((answer) => {
+      const correctAnswer = questions[i].question_answers.find((answer) => {
         return answer.isCorrect;
       });
 
@@ -53,7 +53,7 @@ const Page = () => {
     setResult({ totalPoint, myScore });
 
     const { data } = await supabase
-      .from("quiz_attemtps")
+      .from("quiz_attempts")
       .insert({
         quizId: quizId,
         totalScore: totalPoint,
@@ -64,10 +64,10 @@ const Page = () => {
     const attemptId = data[0].id;
 
     for (let i = 0; i < questions.length; i++) {
-      const correctAnswer = questions[i].quistion_answers.find((answer) => {
+      const correctAnswer = questions[i].question_answers.find((answer) => {
         return answer.isCorrect;
       });
-      await supabase.from("quiz_attemtps_answer").insert({
+      await supabase.from("quiz_attempts_answer").insert({
         attemptId: attemptId,
         answerId: answers[questions[i].id],
         isCorrect: correctAnswer.id === answers[questions[i]],
@@ -121,7 +121,7 @@ const Page = () => {
                     <p className="text-sm font-medium">Answers</p>
 
                     <div className="space-y-2">
-                      {question?.quistion_answers?.map(
+                      {question?.question_answers?.map(
                         (answer, answerIndex) => {
                           return (
                             <div

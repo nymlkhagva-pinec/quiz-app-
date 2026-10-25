@@ -43,7 +43,7 @@ const Page = () => {
                 onClick={() => handleRedirect(item.id)}
               >
                 <CardHeader>
-                  <CardTitle className="text-xl">{item.quizName}</CardTitle>
+                  <CardTitle className="text-xl">{item.quizTitle}</CardTitle>
                 </CardHeader>
 
                 <CardContent>
