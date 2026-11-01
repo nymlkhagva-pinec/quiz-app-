@@ -70,7 +70,7 @@ const Page = () => {
       await supabase.from("quiz_attempts_answer").insert({
         attemptId: attemptId,
         answerId: answers[questions[i].id],
-        isCorrect: correctAnswer.id === answers[questions[i]],
+        isCorrect: correctAnswer.id === answers[questions[i].id],
       });
     }
   };
@@ -80,6 +80,7 @@ const Page = () => {
     if (result && isSelected) return "border-red-500";
     if (isSelected) return "border-sky-500";
   };
+
 
   return (
     <main className="min-h-screen bg-muted/40 px-4 py-10">
@@ -153,11 +154,11 @@ const Page = () => {
             );
           })}
 
-          <Button onClick={answer}>answer</Button>
+          <Button onClick={answer}>Submit Answers</Button>
           {result && (
             <div>
-              <div>totalPoint: {result.totalPoint}</div>
-              <div>score: {result.myScore}</div>
+              <div>Total Score: {result.totalPoint}</div>
+              <div>Score: {result.myScore}</div>
             </div>
           )}
         </div>

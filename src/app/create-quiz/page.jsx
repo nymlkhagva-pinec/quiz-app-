@@ -71,38 +71,45 @@ const CreateQuizPage = () => {
   };
 
   const createQuiz = async () => {
-    const response = await supabase
+    if (
+      questions[0] === "" ||
+      questions[1] === "" ||
+      questions[2] === "" ||
+      questions[3] === ""
+    ) {
+      alert("fill all the inputs");
+      return;
+    }
+    const { data, error } = await supabase
       .from("quiz")
-      .insert({
-        quizTitle: quiz,
-      })
-      .select("*")
-      .single();
+      .insert({ quizTitle: quiz })
+      .select("*");
 
-    const quizId = response.data.id;
+    const quizId = data[0].id;
 
     for (let i = 0; i < questions.length; i++) {
-      const response = await supabase
+      const { data: quizData, error: quizError } = await supabase
         .from("quiz_questions")
         .insert({
           question: questions[i].question,
           quizId: quizId,
-          point: questions[i].point,
+          point: questions[i].points,
         })
         .select("*");
 
-      const questionId = response.data[0].id;
+      const questionId = quizData[0].id;
 
       for (let j = 0; j < questions[i].answers.length; j++) {
-        await supabase.from("question_answers").insert({
-          questionId: questionId,
-          answer: questions[i].answers[j],
-          isCorrect: questions[i].correctIndex === j,
-        });
+        const { data: answerData, error: answerError } = await supabase
+          .from("question_answers")
+          .insert({
+            questionId: questionId,
+            answer: questions[i].answers[j],
+            isCorrect: questions[i].correctIndex === j,
+          });
       }
-
-      console.log(response, "question");
     }
+    alert("success");
   };
 
   return (
