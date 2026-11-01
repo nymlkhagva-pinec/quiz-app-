@@ -1,7 +1,7 @@
 "use client";
 
 import { supabaseClient } from "@/lib/supabase/client";
-import { useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,10 +9,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useRouter } from "next/navigation";
 
 const CreateQuizPage = () => {
   const supabase = supabaseClient();
-
+  const router = useRouter()
   const [quiz, setQuiz] = useState("");
   const [questions, setQuestions] = useState([
     {
@@ -22,6 +23,18 @@ const CreateQuizPage = () => {
       correctIndex: 0,
     },
   ]);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const {data: {user}} = await supabase.auth.getUser()
+
+      if (!user) {
+        router.push("/login")
+      }
+    }
+
+    checkUser()
+  }, [])
 
   const handleQuizName = (event) => setQuiz(event.target.value);
 
@@ -87,13 +100,15 @@ const CreateQuizPage = () => {
 
     const quizId = data[0].id;
 
+    console.log(data)
+
     for (let i = 0; i < questions.length; i++) {
       const { data: quizData, error: quizError } = await supabase
         .from("quiz_questions")
         .insert({
           question: questions[i].question,
           quizId: quizId,
-          point: questions[i].points,
+          point: questions[i].point,
         })
         .select("*");
 
@@ -110,6 +125,7 @@ const CreateQuizPage = () => {
       }
     }
     alert("success");
+    router.push("/quiz")
   };
 
   return (
@@ -184,7 +200,7 @@ const CreateQuizPage = () => {
                   </div>
 
                   {/* Points */}
-                  <div className="grid max-w-[180px] gap-2">
+                  <div className="grid max-w-180px gap-2">
                     <Label htmlFor={`point-${questionIndex}`}>Points</Label>
 
                     <Input

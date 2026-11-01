@@ -11,6 +11,18 @@ const Page = () => {
   const router = useRouter();
 
   useEffect(() => {
+    const checkUser = async () => {
+      const {data: {user}} = await supabase.auth.getUser()
+
+      if (!user) {
+        router.push("/login")
+      }
+    }
+
+    checkUser()
+  }, [])
+
+  useEffect(() => {
     const getQuiz = async () => {
       const response = await supabase.from("quiz").select("*");
       setQuiz(response.data);

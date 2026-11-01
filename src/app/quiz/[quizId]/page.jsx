@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
   const params = useParams();
@@ -14,8 +15,21 @@ const Page = () => {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [result, setResult] = useState(null);
+  const router = useRouter()
 
   const quizId = params.quizId;
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const {data: {user}} = await supabase.auth.getUser()
+
+      if (!user) {
+        router.push("/login")
+      }
+    }
+
+    checkUser()
+  }, [])
 
   useEffect(() => {
     const getQuizQuestions = async () => {
@@ -84,6 +98,9 @@ const Page = () => {
 
   return (
     <main className="min-h-screen bg-muted/40 px-4 py-10">
+      <Button variant="outline" onClick={router.back} className="mb-6">
+        Return To Quizzes
+      </Button>
       <div className="mx-auto max-w-3xl space-y-8">
         {/* Header */}
         <div className="space-y-2">
